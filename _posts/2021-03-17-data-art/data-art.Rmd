@@ -1,0 +1,49 @@
+---
+title: "My First Data Art Visualization"
+description: |
+  A Review on my first data art visualization
+author:
+  - name: Emmanuel Ugochukwu
+    url: {}
+date: 03-17-2021
+preview: data_art_1.png
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+![](steam_logo.png){width=65,height=100}
+
+<p> Using this week's #tidytuesday Dataset gotten from Steam, I created a Shiny Web Application that shows p-values and estimates for selected games. Link can be found <a href = ""> here </a> </p>
+<p> I also delved into Data Art. I found it abit challenging to come up with an actual design, after a lot of trials, i came up with this.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, fig.width=8}
+library(tidyverse)
+## loading data
+movies_df <- read_csv("games.txt")
+
+ movies_df %>%
+  ## Some data cleaning
+  mutate(avg_peak_perc = parse_number(avg_peak_perc),
+         sign_check = str_starts(gamename, "<")) %>%
+  filter(!is.na(gain),!is.na(avg_peak_perc), sign_check == FALSE) %>%
+  select(avg:avg_peak_perc) %>%
+  cor() %>%
+  as.data.frame() %>%
+  mutate(vars = c("avg", "gain", "peak", "avg_peak_perc")) %>%
+  gather(value = "value", key = "key", -vars) %>%
+  ggplot(aes(vars, key, fill = value)) +
+  geom_hex() +
+  theme_void() +
+  theme(legend.position = "none")
+
+```
+
+
+
+
